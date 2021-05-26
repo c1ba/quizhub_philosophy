@@ -21,11 +21,18 @@ class category {
     }
 }
 
+let f = (array, arrayLength) =>{
+    while(array.length < arrayLength){
+        var r = Math.floor(Math.random() * arrayLength);
+        if(array.indexOf(r) === -1) array.push(r);
+    }
+}
+
 
 
 let s = [],
       cts=["Nihilist", "Existentialist", "Hedonist", "Stoicist"], cevaTest;
-let c= new category, i=0, nihilism = new category, existentialism = new category, hedonism = new category, categList = [], categIndex = 0;
+let c= new category, i=0, nihilism = new category, existentialism = new category, hedonism = new category, categList = [], categIndex = 0, qArr = [];
 let question_section = document.getElementById("question_section"), nextButton = document.getElementById("next_button"), rate_butts = document.getElementsByClassName("ans"), percentage_box = document.getElementById("percentage_box");
 
 categList.push(nihilism); categList.push(existentialism); categList.push(hedonism);
@@ -33,7 +40,8 @@ categList.push(nihilism); categList.push(existentialism); categList.push(hedonis
 fetch("questions.json")
     .then(response => response.json())
     .then (data => {
-        question_section.innerHTML = "<h2 style='text-align: center;'>"+data[i].question+"</h2>";
+        f(qArr, data.length);
+        question_section.innerHTML = "<h2 style='text-align: center;'>"+data[qArr[i]].question+"</h2>";
 
         //At the click of the "Next" button, it gets to the next question
         nextButton.onclick = function(){
@@ -46,16 +54,11 @@ fetch("questions.json")
                     break;
                 }
             }
-            console.log(data[i].category);
-            console.log(cts);
-            console.log(categList);
+
             //Verifies if there was any checked value found. If not, it opens a pop-up. If yes, proceeds with the questions.
             if(checked_val!=undefined){
                 for(let k in cts){
-                    console.log(k);
-                    console.log(categList[k]);
-                    console.log(Boolean(data[i].category == cts[k]));
-                    if(data[i].category == cts[k]){
+                    if(data[qArr[i]].category == cts[k]){
                         categList[k].insertQuestion(rate_butts[checked_val].value, data[i].category);
                         categList[k].addResult(rate_butts[checked_val].value);
                         break;
@@ -63,7 +66,7 @@ fetch("questions.json")
                 }
                 i++;
                 if(i < data.length){
-                question_section.innerHTML = "<h2 style='text-align: center;'>"+data[i].question+"</h2>";
+                question_section.innerHTML = "<h2 style='text-align: center;'>"+data[qArr[i]].question+"</h2>";
                 }
             }
             else{
